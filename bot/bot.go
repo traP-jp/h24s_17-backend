@@ -16,11 +16,11 @@ type Bot struct {
 	AccessToken       string
 }
 
-func New(botID string, userID string, accessToken string, verificationToken string) Bot {
+func New(botID string, userID string, accessToken string, verificationToken string) *Bot {
 	client := traq.NewAPIClient(traq.NewConfiguration())
 	auth := context.WithValue(context.Background(), traq.ContextAccessToken, accessToken)
 
-	return Bot{
+	return &Bot{
 		client,
 		auth,
 		botID,

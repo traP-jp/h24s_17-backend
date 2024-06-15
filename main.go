@@ -42,7 +42,7 @@ func main() {
 		os.Getenv("BOT_ACCESS_TOKEN"),
 		os.Getenv("VERIFICATION_TOKEN"),
 	)
-	state.SetupRoutes(e, &bot)
+	state.SetupRoutes(e, bot)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
