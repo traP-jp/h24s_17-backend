@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
+	"github.com/traP-jp/h24s_17-backend/utils"
 )
 
 type GetTokenResponse struct {
@@ -20,16 +21,18 @@ func GetTokenhandler(c echo.Context, db sqlx.DB) error {
 
 	// 有効なtokenが存在しない場合 作成してinsertする
 	if err != nil {
-		newToken := genToken()
-		_, err := db.Exec("INSERT INTO tokens (token, created_at) VALUES (?, NOW())", newToken)
+		newToken, err := utils.GenerateRandomToken(10)
+		if err != nil {
+			return echo.NewHTTPError(500, "Internal server error")
+
+		}
+
+		_, err = db.Exec("INSERT INTO tokens (token, created_at) VALUES (?, NOW())", newToken)
+
 		if err != nil {
 			return echo.NewHTTPError(500, "Internal server error")
 		}
 		return c.JSON(200, GetTokenResponse{token})
 	}
 	return c.JSON(200, GetTokenResponse{token})
-}
-
-func genToken() string {
-	return "aiueo"
 }
