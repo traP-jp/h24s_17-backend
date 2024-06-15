@@ -13,6 +13,7 @@ import (
 func (s *State) SetupRoutes(e *echo.Echo, b *bot.Bot) {
 	e.GET("/hello/:name", s.HelloHandler)
 	e.POST("/checkin", s.CheckinHandler)
+	e.POST("/stand", s.PostStandHandler)
 	e.POST("/bot", MakeBotHandler(b.VerificationToken, b.MakeHandlers()))
 }
 
