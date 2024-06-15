@@ -1,18 +1,12 @@
 package models
 
 import (
-	"database/sql"
-	"errors"
 	"log"
 	"os"
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
-
-type TableList struct {
-	TablesInH24s17 string `json:"tables_in_h24s17,omitempty" db:"Tables_in_h24s17"`
-}
 
 func Connect() (*sqlx.DB, error) {
 	conf := mysql.Config{
@@ -39,21 +33,6 @@ func Connect() (*sqlx.DB, error) {
 	}
 
 	log.Println("ping succeeded")
-
-	var x TableList
-	err = db.Get(&x, "SHOW TABLES")
-
-	log.Println("SHOW TABLES:")
-	log.Println(x)
-
-	if errors.Is(err, sql.ErrNoRows) {
-		log.Printf("no table in %s\n", conf.DBName)
-	}
-	if err != nil {
-		log.Printf("DB error: %s\n", err)
-
-		return db, err
-	}
 
 	return db, nil
 }
