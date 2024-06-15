@@ -27,12 +27,12 @@ func Connect() (*sqlx.DB, error) {
 
 	err = db.Ping()
 	if err != nil {
-		log.Println("ping failed")
+		log.Println("DB ping failed")
 
 		return db, err
 	}
 
-	log.Println("ping succeeded")
+	log.Println("DB ping succeeded")
 
 	return db, nil
 }
