@@ -31,11 +31,11 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MAC_SECRET=FAKE_SECRET
-      - BOT_ID=0cb41932-9564-4f39-a5b9-3316c57bd2ab
-      - BOT_USER_ID=0cb41932-9564-4f39-a5b9-3316c57bd2ab
-      - VERIFICATION_TOKEN=verificationtoken
-      - BOT_ACCESS_TOKEN=botaccesstoken
+      - MAC_SECRET=${MAC_SECRET}
+      - BOT_ID=${BOT_ID}
+      - BOT_USER_ID=${BOT_USER_ID}
+      - VERIFICATION_TOKEN=${VERIFICATION_TOKEN}
+      - BOT_ACCESS_TOKEN=${BOT_ACCSESS_TOKEN}
     depends_on:
       db:
         condition: service_healthy
