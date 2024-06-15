@@ -14,7 +14,7 @@ import (
 )
 
 type TableList struct {
-	Tables_in_h24s17 string `json:"tables_in_h24s17,omitempty" db:"Tables_in_h24s17"`
+	TablesInH24s17 string `json:"tables_in_h24s17,omitempty" db:"Tables_in_h24s17"`
 }
 
 func main() {
@@ -36,13 +36,13 @@ func main() {
 
 	err = db.Ping()
 	if err != nil {
-		log.Fatal(err)
 		log.Println("ping failed")
+		log.Fatal(err)
 
 		return
-	} else {
-		log.Println("ping succeeded")
 	}
+
+	log.Println("ping succeeded")
 
 	var x TableList
 	err = db.Get(&x, "SHOW TABLES")
