@@ -12,7 +12,7 @@ type GetTokenResponse struct {
 
 // tokensテーブルをこのエンドポイント以外からmutateしてはいけない
 // GET /stand?mac_secret=foobar
-func GetTokenhandler(c echo.Context, db sqlx.DB) error {
+func GetTokenHandler(c echo.Context, db sqlx.DB) error {
 	// mac_secretが環境変数と一致
 
 	// tokenをdbから取ってくる
