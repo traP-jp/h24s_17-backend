@@ -10,11 +10,11 @@ import (
 
 func Connect() (*sqlx.DB, error) {
 	conf := mysql.Config{
-		User:                 os.Getenv("MYSQL_USER"),
-		Passwd:               os.Getenv("MYSQL_PASSWORD"),
+		User:                 os.Getenv("NS_MARIADB_USER"),
+		Passwd:               os.Getenv("NS_MARIADB_PASSWORD"),
 		Net:                  "tcp",
-		Addr:                 os.Getenv("MYSQL_HOSTNAME") + ":" + os.Getenv("MYSQL_PORT"),
-		DBName:               "h24s17",
+		Addr:                 os.Getenv("NS_MARIADB_HOSTNAME") + ":" + os.Getenv("NS_MARIADB_PORT"),
+		DBName:               os.Getenv("NS_MARIADB_DATABASE"),
 		AllowNativePasswords: true,
 	}
 

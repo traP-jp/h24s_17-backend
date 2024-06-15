@@ -26,11 +26,11 @@ services:
   app:
     build: .
     environment:
-      - MYSQL_HOSTNAME=db
-      - MYSQL_PORT=3306
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - NS_MARIADB_HOSTNAME=db
+      - NS_MARIADB_PORT=3306
+      - NS_MARIADB_USER=${MYSQL_USER}
+      - NS_MARIADB_PASSWORD=${MYSQL_PASSWORD}
+      - NS_MARIADB_DATABASE=${MYSQL_DATABASE}
     depends_on:
       db:
         condition: service_healthy
