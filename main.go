@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/labstack/echo/v4"
+	"github.com/traP-jp/h24s_17-backend/bot"
 	"github.com/traP-jp/h24s_17-backend/models"
 	"github.com/traP-jp/h24s_17-backend/routes"
 )
@@ -34,6 +35,14 @@ func main() {
 
 	e := echo.New()
 	state := routes.NewState()
-	state.SetupRoutes(e)
+
+	bot := bot.New(
+		os.Getenv("BOT_ID"),
+		os.Getenv("BOT_USER_ID"),
+		os.Getenv("BOT_ACCESS_TOKEN"),
+		os.Getenv("VERIFICATION_TOKEN"),
+	)
+	state.SetupRoutes(e, &bot)
+
 	e.Logger.Fatal(e.Start(":1323"))
 }

@@ -10,8 +10,14 @@ import (
 	traqbot "github.com/traPtitech/traq-bot"
 )
 
-func (s *State) SetupRoutes(e *echo.Echo) {
+func (s *State) SetupRoutes(e *echo.Echo, b *bot.Bot) {
 	e.GET("/hello/:name", s.HelloHandler)
+
+	e.POST("", MakeBotHandler(b.VerificationToken, b.MakeHandlers()))
+	api := e.Group("/api")
+	api.GET("/ping", func(c echo.Context) error {
+		return c.String(http.StatusOK, "pong")
+	})
 }
 
 func MakeBotHandler(vt string, handlers traqbot.EventHandlers) func(c echo.Context) error {
@@ -77,12 +83,4 @@ func MakeBotHandler(vt string, handlers traqbot.EventHandlers) func(c echo.Conte
 		}
 		return c.NoContent(http.StatusNoContent)
 	}
-}
-
-func setRouting(e *echo.Echo, b *bot.Bot) {
-	e.POST("", MakeBotHandler(b.VerificationToken, b.MakeHandlers()))
-	api := e.Group("/api")
-	api.GET("/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "pong")
-	})
 }
