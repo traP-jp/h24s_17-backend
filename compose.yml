@@ -1,0 +1,38 @@
+services:
+  db:
+    image: mariadb:lts
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    expose:
+      - 3306
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "healthcheck.sh",
+          "--su-mysql",
+          "--connect",
+          "--innodb_initialized"
+        ]
+      interval: 10s
+      timeout: 5s
+      start_period: 5s
+      retries: 5
+  app:
+    build: .
+    environment:
+      - MYSQL_HOSTNAME=db
+      - MYSQL_PORT=3306
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "1323:1323"
