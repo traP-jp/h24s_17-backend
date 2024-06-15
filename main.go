@@ -5,12 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
+	"github.com/traP-jp/h24s_17-backend/routes"
 )
 
 type TableList struct {
@@ -67,12 +67,6 @@ func main() {
 	fmt.Printf("loaded MAC_SECRET: %s\n", macSecret)
 
 	e := echo.New()
-
-	e.GET("/hello/:name", func(c echo.Context) error {
-		name := c.Param("name")
-
-		return c.String(http.StatusOK, "Hello, "+name+".\n")
-	})
-
+	routes.SetupRoutes(e)
 	e.Logger.Fatal(e.Start(":1323"))
 }
