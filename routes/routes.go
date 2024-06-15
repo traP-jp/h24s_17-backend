@@ -2,7 +2,8 @@ package routes
 
 import "github.com/labstack/echo/v4"
 
-func SetupRoutes(e *echo.Echo) {
-	e.GET("/hello/:name", hello)
+func (s *State) SetupRoutes(e *echo.Echo) {
 	e.GET("/stand", GetTokenHandler)
+	e.GET("/hello/:name", s.HelloHandler)
+	e.POST("/checkin", s.CheckinHandler)
 }
