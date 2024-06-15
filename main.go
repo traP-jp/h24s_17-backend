@@ -12,7 +12,7 @@ func main() {
 	e.GET("/hello/:name", func(c echo.Context) error {
 		name := c.Param("name")
 
-		return c.String(http.StatusOK, "Hello, "+userID+".\n")
+		return c.String(http.StatusOK, "Hello, "+name+".\n")
 	})
 
 	e.Logger.Fatal(e.Start(":1323"))
