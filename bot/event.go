@@ -1,11 +1,11 @@
 package bot
 
 import (
-	"fmt"
+	"log"
 
 	traqbot "github.com/traPtitech/traq-bot"
 )
 
 func (bot *Bot) PingHandler(*traqbot.PingPayload) {
-	fmt.Println("pong")
+	log.Println("traQBot-pong")
 }
