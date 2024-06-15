@@ -33,6 +33,7 @@ func main() {
 	fmt.Printf("loaded MAC_SECRET: %s\n", macSecret)
 
 	e := echo.New()
-	routes.SetupRoutes(e)
+	state := routes.NewState()
+	state.SetupRoutes(e)
 	e.Logger.Fatal(e.Start(":1323"))
 }
