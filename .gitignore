@@ -2,7 +2,7 @@
 # https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
 #
 # Binaries for programs and plugins
-h24s_17-sample
+h24s_17-backend
 *.exe
 *.exe~
 *.dll
