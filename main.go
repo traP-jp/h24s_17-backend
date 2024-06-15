@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"os"
 
@@ -57,14 +56,6 @@ func main() {
 
 		return
 	}
-
-	macSecret, ok := os.LookupEnv("MAC_SECRET")
-	if !ok {
-		fmt.Println("MAC_SECRET is not set")
-
-		return
-	}
-	fmt.Printf("loaded MAC_SECRET: %s\n", macSecret)
 
 	e := echo.New()
 	routes.SetupRoutes(e)
