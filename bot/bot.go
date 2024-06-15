@@ -33,5 +33,6 @@ func New(botID string, userID string, accessToken string, verificationToken stri
 func (bot *Bot) MakeHandlers() traqbot.EventHandlers {
 	handlers := traqbot.EventHandlers{}
 	handlers.SetPingHandler(bot.PingHandler)
+
 	return handlers
 }
