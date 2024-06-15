@@ -11,13 +11,13 @@ import (
 )
 
 func main() {
-	db, err := models.Connect()
+	repo, err := models.ConnectRepository()
 	if err != nil {
 		log.Fatal(err)
 
 		return
 	}
-	err = models.Migrate(db)
+	err = repo.Migrate()
 	if err != nil {
 		log.Fatal(err)
 
