@@ -11,6 +11,7 @@ func main() {
 
 	e.GET("/hello/:name", func(c echo.Context) error {
 		userID := c.Param("name")
+
 		return c.String(http.StatusOK, "Hello, "+userID+".\n")
 	})
 
