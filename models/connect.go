@@ -36,3 +36,15 @@ func Connect() (*sqlx.DB, error) {
 
 	return db, nil
 }
+
+func Migrate(db *sqlx.DB) error {
+	query := `CREATE TABLE IF NOT EXISTS tokens (
+		token CHAR(12) NOT NULL PRIMARY KEY,
+		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		deleted_at TIMESTAMP DEFAULT NULL
+	);`
+
+	_, err := db.Exec(query)
+
+	return err
+}
