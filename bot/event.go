@@ -6,6 +6,6 @@ import (
 	traqbot "github.com/traPtitech/traq-bot"
 )
 
-func (bot *Bot) PingHandler(payload *traqbot.PingPayload) {
+func (bot *Bot) PingHandler(*traqbot.PingPayload) {
 	fmt.Println("pong")
 }

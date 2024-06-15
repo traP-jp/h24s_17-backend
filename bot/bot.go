@@ -10,20 +10,21 @@ import (
 type Bot struct {
 	client            *traq.APIClient
 	auth              context.Context
-	Id                string
-	UserId            string
+	ID                string
+	UserID            string
 	VerificationToken string
 	AccessToken       string
 }
 
-func New(botId string, userId string, accessToken string, verificationToken string) Bot {
+func New(botID string, userID string, accessToken string, verificationToken string) Bot {
 	client := traq.NewAPIClient(traq.NewConfiguration())
 	auth := context.WithValue(context.Background(), traq.ContextAccessToken, accessToken)
+
 	return Bot{
 		client,
 		auth,
-		botId,
-		userId,
+		botID,
+		userID,
 		verificationToken,
 		accessToken,
 	}

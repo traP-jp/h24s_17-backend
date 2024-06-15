@@ -12,7 +12,7 @@ import (
 
 func (s *State) SetupRoutes(e *echo.Echo, b *bot.Bot) {
 	e.GET("/hello/:name", s.HelloHandler)
-  e.POST("/checkin", s.CheckinHandler)
+	e.POST("/checkin", s.CheckinHandler)
 	e.POST("", MakeBotHandler(b.VerificationToken, b.MakeHandlers()))
 	api := e.Group("/api")
 	api.GET("/ping", func(c echo.Context) error {
@@ -81,6 +81,7 @@ func MakeBotHandler(vt string, handlers traqbot.EventHandlers) func(c echo.Conte
 		if ok && h != nil {
 			h(event, payload)
 		}
+
 		return c.NoContent(http.StatusNoContent)
 	}
 }
