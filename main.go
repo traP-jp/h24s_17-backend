@@ -10,7 +10,7 @@ func main() {
 	e := echo.New()
 
 	e.GET("/hello/:name", func(c echo.Context) error {
-		userID := c.Param("name")
+		name := c.Param("name")
 
 		return c.String(http.StatusOK, "Hello, "+userID+".\n")
 	})
