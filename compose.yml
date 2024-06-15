@@ -17,7 +17,7 @@ services:
           "healthcheck.sh",
           "--su-mysql",
           "--connect",
-          "--innodb_initialized"
+          "--innodb_initialized",
         ]
       interval: 10s
       timeout: 5s
@@ -31,6 +31,11 @@ services:
       - NS_MARIADB_USER=${MYSQL_USER}
       - NS_MARIADB_PASSWORD=${MYSQL_PASSWORD}
       - NS_MARIADB_DATABASE=${MYSQL_DATABASE}
+      - MAC_SECRET=${MAC_SECRET}
+      - BOT_ID=${BOT_ID}
+      - BOT_USER_ID=${BOT_USER_ID}
+      - VERIFICATION_TOKEN=${VERIFICATION_TOKEN}
+      - BOT_ACCESS_TOKEN=${BOT_ACCSESS_TOKEN}
     depends_on:
       db:
         condition: service_healthy
