@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"image"
-	"image/jpeg"
+	"image/png"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -27,7 +27,7 @@ func (bot *Bot) PostFile(cid string, filename string, content []byte) (*http.Res
 	writer := multipart.NewWriter(body)
 	{
 		part := make(textproto.MIMEHeader)
-		part.Set("Content-Type", "image/jpeg")
+		part.Set("Content-Type", "image/png")
 		part.Set("Content-Disposition", fmt.Sprintf(`form-data; name="file"; filename="%s"`, filename))
 		wp, err := writer.CreatePart(part)
 		if err != nil {
@@ -83,13 +83,13 @@ func (bot *Bot) PostFile(cid string, filename string, content []byte) (*http.Res
 func (bot *Bot) SendImage(cid string, msg *Message, embed bool) {
 	buf := new(bytes.Buffer)
 
-	if err := jpeg.Encode(buf, *msg.imgContent, nil); err != nil {
-		log.Println("Failed To Encode jpeg File")
+	if err := png.Encode(buf, *msg.imgContent); err != nil {
+		log.Println("Failed To Encode png File")
 
 		return
 	}
 
-	r, err := bot.PostFile(cid, "img.jpeg", buf.Bytes())
+	r, err := bot.PostFile(cid, "img.png", buf.Bytes())
 	if err != nil {
 		log.Println("Faild To Post Image")
 

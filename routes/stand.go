@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"image/jpeg"
+	"image/png"
 	"net/http"
 	"strings"
 
@@ -14,10 +14,10 @@ func (s *State) PostStandHandler(c echo.Context) error {
 	if req.Header.Get("X-Raspi-Secret") != s.raspiSecret {
 		return echo.NewHTTPError(401, "Unauthorized")
 	}
-	if !strings.HasPrefix(req.Header.Get("Content-Type"), "image/jpeg") {
+	if !strings.HasPrefix(req.Header.Get("Content-Type"), "image/png") {
 		return echo.NewHTTPError(415, "Unsupported Media Type")
 	}
-	image, err := jpeg.Decode(req.Body)
+	image, err := png.Decode(req.Body)
 	if err != nil {
 		return echo.NewHTTPError(400, "Bad Request")
 	}
