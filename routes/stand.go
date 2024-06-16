@@ -23,7 +23,7 @@ func (s *State) PostStandHandler(c echo.Context) error {
 	}
 	s.bot.SendImage(
 		s.sendChannelID,
-		bot.NewMessage(&image),
+		bot.NewMessage(s.raspiUser, &image),
 		true)
 
 	return c.String(http.StatusOK, "POST /state")

@@ -15,11 +15,12 @@ import (
 )
 
 type Message struct {
+	userID     string
 	imgContent *image.Image
 }
 
-func NewMessage(imgContent *image.Image) *Message {
-	return &Message{imgContent: imgContent}
+func NewMessage(u string, imgContent *image.Image) *Message {
+	return &Message{userID: u, imgContent: imgContent}
 }
 
 func (bot *Bot) PostFile(cid string, filename string, content []byte) (*http.Response, error) {
@@ -122,7 +123,7 @@ func (bot *Bot) SendImage(cid string, msg *Message, embed bool) {
 		log.Printf("Response Body: %s\n", buf.String())
 	}
 
-	file := fmt.Sprintf("https://q.trap.jp/files/%s", f.Id)
+	file := fmt.Sprintf("現在のユーザー: @%s\n\nhttps://q.trap.jp/files/%s", msg.userID, f.Id)
 	req := traq.NewPostMessageRequest(file)
 	req.Embed = &embed
 	m, r, err := bot.client.MessageApi.
