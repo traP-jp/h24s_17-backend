@@ -93,7 +93,7 @@ func (bot *Bot) SendImage(cid string, msg *Message, embed bool) {
 	fileID, err := bot.PostFile(cid, "img.png", buf.Bytes())
 	log.Println("FileID: " + *fileID)
 
-	file := fmt.Sprintf("現在のユーザー: @%s\n\nhttps://q.trap.jp/files/%s", msg.userID, fileID)
+	file := fmt.Sprintf("現在のユーザー: @%s\n\nhttps://q.trap.jp/files/%s", msg.userID, *fileID)
 	req := traq.NewPostMessageRequest(file)
 	req.Embed = &embed
 	m, r, err := bot.client.MessageApi.
