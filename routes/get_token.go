@@ -1,9 +1,6 @@
 package routes
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/labstack/echo/v4"
 )
 
@@ -14,14 +11,7 @@ type GetTokenResponse struct {
 // tokensテーブルをこのエンドポイント以外からmutateしてはいけない
 // GET /stand
 func (s *State) GetTokenHandler(c echo.Context) error {
-	// mac_secretが環境変数と一致
-	macSecret, ok := os.LookupEnv("MAC_SECRET")
-	if !ok {
-		fmt.Println("MAC_SECRET is not set")
-		return echo.NewHTTPError(500, "Internal server error")
-	}
-
-	if macSecret != c.Request().Header.Get("X-Mac-Secret") {
+	if s.macSecret != c.Request().Header.Get("X-Mac-Secret") {
 		return echo.NewHTTPError(401, "Unauthorized")
 	}
 
