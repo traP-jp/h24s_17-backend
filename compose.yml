@@ -36,6 +36,7 @@ services:
       - BOT_USER_ID=${BOT_USER_ID}
       - VERIFICATION_TOKEN=${VERIFICATION_TOKEN}
       - BOT_ACCESS_TOKEN=${BOT_ACCESS_TOKEN}
+      - RASPI_SECRET=${RASPI_SECRET}
     depends_on:
       db:
         condition: service_healthy

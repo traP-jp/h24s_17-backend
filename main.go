@@ -37,8 +37,12 @@ func main() {
 	if !ok {
 		log.Fatal("MAC_SECRET is not set")
 	}
+	raspiSecret, ok := os.LookupEnv(("RASPI_SECRET"))
+	if !ok {
+		log.Fatal("RASPI_SECRET is not set")
+	}
 
-	state := routes.NewState(bot, repo, macSecret)
+	state := routes.NewState(bot, repo, macSecret, raspiSecret)
 	state.SetupRoutes(e)
 
 	e.Logger.Fatal(e.Start(":1323"))
