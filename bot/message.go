@@ -27,6 +27,20 @@ func (bot *Bot) PostFile(cid string, filename string, content []byte) (*http.Res
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	{
+		part, err := writer.CreateFormField("channelId")
+		if err != nil {
+			log.Println("Failed To Create Form Field")
+
+			return nil, err
+		}
+		_, err = part.Write([]byte(cid))
+		if err != nil {
+			log.Println("Failed To Write Content")
+
+			return nil, err
+		}
+	}
+	{
 		part := make(textproto.MIMEHeader)
 		part.Set("Content-Type", "image/png")
 		part.Set("Content-Disposition", fmt.Sprintf(`form-data; name="file"; filename="%s"`, filename))
@@ -42,26 +56,13 @@ func (bot *Bot) PostFile(cid string, filename string, content []byte) (*http.Res
 			return nil, err
 		}
 	}
-	{
-		part, err := writer.CreateFormField("channelId")
-		if err != nil {
-			log.Println("Failed To Create Form Field")
-
-			return nil, err
-		}
-		_, err = part.Write([]byte(cid))
-		if err != nil {
-			log.Println("Failed To Write Content")
-
-			return nil, err
-		}
-	}
 	if err := writer.Close(); err != nil {
 		log.Println("Failed To Close Writer")
 
 		return nil, err
 	}
-	r, err := http.NewRequestWithContext(bot.auth, "POST", "https://q.trap.jp/api/v3/files", body)
+	u := fmt.Sprintf("https://q.trap.jp/api/v3/files?channelId=%s", cid)
+	r, err := http.NewRequestWithContext(bot.auth, "POST", u, body)
 	if err != nil {
 		log.Println("Failed To Create Request")
 
