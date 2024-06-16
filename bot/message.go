@@ -24,10 +24,13 @@ func (bot *Bot) SendMessage(cid string, msg *Message, embed bool) {
 		PostMessageRequest(*req).
 		Execute()
 	if err != nil {
-		bot.client.MessageApi.
+		_, _, err := bot.client.MessageApi.
 			PostMessage(bot.auth, cid).
 			PostMessageRequest(*traq.NewPostMessageRequest("Failed To Post Message")).
 			Execute()
+		if err != nil {
+			log.Println("Failed To Post Message")
+		}
 	}
 	log.Println("Sent Message: " + m.Content)
 	log.Printf("StatusCode: %d\n", r.StatusCode)
