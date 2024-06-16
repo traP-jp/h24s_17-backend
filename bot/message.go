@@ -5,6 +5,8 @@ import (
 	"image"
 	"image/jpeg"
 	"log"
+	"mime/multipart"
+	"net/http"
 	"os"
 
 	"github.com/traPtitech/go-traq"
@@ -16,6 +18,69 @@ type Message struct {
 
 func NewMessage(imgContent *image.Image) *Message {
 	return &Message{imgContent: imgContent}
+}
+
+func (bot *Bot) PostFile(cid string, filename string, content []byte) (*http.Response, error) {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	{
+		part, err := writer.CreateFormFile("file", filename)
+		if err != nil {
+			log.Println("Failed To Create Form File")
+
+			return nil, err
+		}
+		_, err = part.Write(content)
+		if err != nil {
+			log.Println("Failed To Write Content")
+
+			return nil, err
+		}
+		err = writer.Close()
+		if err != nil {
+			log.Println("Failed To Close Writer")
+
+			return nil, err
+		}
+	}
+	{
+		part, err := writer.CreateFormField("channelId")
+		if err != nil {
+			log.Println("Failed To Create Form Field")
+
+			return nil, err
+		}
+		_, err = part.Write([]byte(cid))
+		if err != nil {
+			log.Println("Failed To Write Content")
+
+			return nil, err
+		}
+		err = writer.Close()
+		if err != nil {
+			log.Println("Failed To Close Writer")
+
+			return nil, err
+		}
+	}
+	r, err := http.NewRequestWithContext(bot.auth, "POST", "https://q.trap.jp/api/v3/files", body)
+	if err != nil {
+		log.Println("Failed To Create Request")
+
+		return nil, err
+	}
+	r.Header.Set("Content-Type", writer.FormDataContentType())
+	r.Header.Set("Authorization", "Bearer "+bot.auth.Value(traq.ContextAccessToken).(string))
+	client := &http.Client{}
+	resp, err := client.Do(r)
+	if err != nil {
+		log.Println("Failed To Do Request")
+
+		return nil, err
+	}
+	log.Printf("Status Code: %d\n", resp.StatusCode)
+
+	return resp, nil
 }
 
 func (bot *Bot) SendImage(cid string, msg *Message, embed bool) {
