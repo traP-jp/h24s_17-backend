@@ -6,10 +6,11 @@ import (
 )
 
 type State struct {
-	bot  *bot.Bot
-	repo *models.Repository
+	bot       *bot.Bot
+	repo      *models.Repository
+	macSecret string
 }
 
-func NewState(b *bot.Bot, r *models.Repository) *State {
-	return &State{bot: b, repo: r}
+func NewState(b *bot.Bot, r *models.Repository, macSecret string) *State {
+	return &State{bot: b, repo: r, macSecret: macSecret}
 }
