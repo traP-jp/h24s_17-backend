@@ -17,15 +17,13 @@ func (s *State) PostStandHandler(c echo.Context) error {
 	if !strings.HasPrefix(req.Header.Get("Content-Type"), "image/jpeg") {
 		return echo.NewHTTPError(415, "Unsupported Media Type")
 	}
-	traQID := req.Header.Get("X-Forwarded-User")
-
 	image, err := jpeg.Decode(req.Body)
 	if err != nil {
 		return echo.NewHTTPError(400, "Bad Request")
 	}
-	s.bot.SendMessage(
+	s.bot.SendImage(
 		s.sendChannelID,
-		bot.NewMessage(&traQID, &image),
+		bot.NewMessage(&image),
 		true)
 
 	return c.String(http.StatusOK, "POST /state")
