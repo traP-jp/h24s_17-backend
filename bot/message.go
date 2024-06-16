@@ -39,7 +39,14 @@ func (bot *Bot) SendMessage(cid string, msg *Message, embed bool) {
 
 		return
 	}
-	jpeg.Encode(img, *msg.imgContent, &jpeg.Options{Quality: 100})
+	err = jpeg.Encode(img, *msg.imgContent, &jpeg.Options{Quality: 100})
+
+	if err != nil {
+		log.Println("Failed To Encode jpeg File")
+
+		return
+	}
+
 	defer img.Close()
 
 	f, r, err := bot.client.FileApi.
