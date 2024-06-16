@@ -30,7 +30,7 @@ func (s *State) CheckinHandler(c echo.Context) error {
 		return c.String(http.StatusForbidden, "Please recieve the QR token again")
 	}
 
-	s.raspiUser = token
+	s.raspiUser = traQID
 	log.Println("POST /checkin id: " + traQID + ", token: " + token)
 
 	return c.String(http.StatusOK, "POST /checkin id: "+traQID+", token: "+token)
