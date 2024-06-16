@@ -24,21 +24,17 @@ func (bot *Bot) PostFile(cid string, filename string, content []byte) (*http.Res
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	{
-		part, err := writer.CreateFormFile("file", filename)
-		if err != nil {
-			log.Println("Failed To Create Form File")
-
-			return nil, err
-		}
-		_, err = part.Write(content)
+		part := make(textproto.MIMEHeader)
+		part.Set("Content-Type", "image/jpeg")
+		part.Set("Content-Disposition", fmt.Sprintf(`form-data; name="file"; filename="%s"`, filename))
+		wp, err := writer.CreatePart(part)
 		if err != nil {
 			log.Println("Failed To Write Content")
 
 			return nil, err
 		}
-		err = writer.Close()
-		if err != nil {
-			log.Println("Failed To Close Writer")
+		if _, err = wp.Write(content); err != nil {
+			log.Println("Failed To Write Content")
 
 			return nil, err
 		}
