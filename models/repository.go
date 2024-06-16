@@ -24,9 +24,9 @@ func (r *Repository) Migrate() error {
 }
 
 func (r *Repository) CreateToken(token string) (Token, error) {
-	query := "INSERT INTO tokens (token) VALUES (\"" + token + "\");"
+	query := "INSERT INTO tokens (token) VALUES (?)"
 
-	_, err := r.db.Exec(query)
+	_, err := r.db.Exec(query, token)
 
 	return Token{token}, err
 }
@@ -37,6 +37,18 @@ func (r *Repository) ReadTokens() ([]Token, error) {
 	err := r.db.Select(&tokens, query)
 
 	return tokens, err
+}
+
+func (r *Repository) CheckIfTokenExists(token string) (bool, error) {
+	query := "SELECT COUNT(token) FROM tokens WHERE token = (?)"
+	var count int64
+	err := r.db.Get(&count, query, token)
+
+	if err != nil || count == 0 {
+		return false, err
+	}
+
+	return true, err
 }
 
 // なかったら作る

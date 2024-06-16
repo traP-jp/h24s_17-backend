@@ -11,8 +11,9 @@ type State struct {
 	macSecret     string
 	raspiSecret   string
 	sendChannelID string
+	raspiUser     string
 }
 
 func NewState(b *bot.Bot, r *models.Repository, macSecret string, raspiSecret string, sendChannelID string) *State {
-	return &State{bot: b, repo: r, macSecret: macSecret, raspiSecret: raspiSecret, sendChannelID: sendChannelID}
+	return &State{bot: b, repo: r, macSecret: macSecret, raspiSecret: raspiSecret, sendChannelID: sendChannelID, raspiUser: ""}
 }
