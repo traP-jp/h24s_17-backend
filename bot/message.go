@@ -25,6 +25,7 @@ func (bot *Bot) SendImage(cid string, msg *Message, embed bool) {
 
 		return
 	}
+	defer os.Remove(img.Name())
 	err = jpeg.Encode(img, *msg.imgContent, nil)
 
 	if err != nil {
@@ -49,7 +50,6 @@ func (bot *Bot) SendImage(cid string, msg *Message, embed bool) {
 	if err := img.Close(); err != nil {
 		log.Println("Failed To Close File")
 	}
-	defer os.Remove(img.Name())
 
 	file := fmt.Sprintf("https://q.trap.jp/files/%s", f.Id)
 	req := traq.NewPostMessageRequest(file)
