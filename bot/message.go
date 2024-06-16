@@ -1,13 +1,15 @@
 package bot
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"image"
 	"image/jpeg"
 	"log"
 	"mime/multipart"
 	"net/http"
-	"os"
+	"net/textproto"
 
 	"github.com/traPtitech/go-traq"
 )
@@ -80,36 +82,45 @@ func (bot *Bot) PostFile(cid string, filename string, content []byte) (*http.Res
 }
 
 func (bot *Bot) SendImage(cid string, msg *Message, embed bool) {
-	img, err := os.CreateTemp("", "img.jpeg")
-	if err != nil {
-		log.Println("Failed To Create Temp File")
+	buf := new(bytes.Buffer)
 
-		return
-	}
-	defer os.Remove(img.Name())
-	err = jpeg.Encode(img, *msg.imgContent, nil)
-
-	if err != nil {
+	if err := jpeg.Encode(buf, *msg.imgContent, nil); err != nil {
 		log.Println("Failed To Encode jpeg File")
 
 		return
 	}
 
-	f, r, err := bot.client.FileApi.
-		PostFile(bot.auth).
-		File(img).
-		ChannelId(cid).
-		Execute()
+	r, err := bot.PostFile(cid, "img.jpeg", buf.Bytes())
 	if err != nil {
 		log.Println("Faild To Post Image")
 
 		return
 	}
-	log.Println("Sent File: " + f.GetName())
-	log.Printf("Status Code: %d", r.StatusCode)
+	defer r.Body.Close()
+	buf.Reset()
+	if _, err := buf.ReadFrom(r.Body); err != nil {
+		log.Println("Failed To Read Response Body")
 
-	if err := img.Close(); err != nil {
-		log.Println("Failed To Close File")
+		return
+	}
+	log.Printf("Status Code: %d\n", r.StatusCode)
+	var f traq.FileInfo
+	if err := json.Unmarshal(buf.Bytes(), &f); err != nil {
+		log.Println("Failed To Decode JSON")
+
+		return
+	}
+
+	{
+		// log response
+		log.Printf("File Info: %v\n", f)
+		buf := new(bytes.Buffer)
+		if err := json.NewEncoder(buf).Encode(f); err != nil {
+			log.Println("Failed To Encode JSON")
+
+			return
+		}
+		log.Printf("Response Body: %s\n", buf.String())
 	}
 
 	file := fmt.Sprintf("https://q.trap.jp/files/%s", f.Id)
@@ -126,5 +137,4 @@ func (bot *Bot) SendImage(cid string, msg *Message, embed bool) {
 	}
 	log.Println("Sent Message: " + m.Content)
 	log.Printf("StatusCode: %d\n", r.StatusCode)
-
 }
