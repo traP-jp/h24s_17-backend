@@ -6,12 +6,14 @@ import (
 )
 
 type State struct {
-	bot       *bot.Bot
-	repo      *models.Repository
-	macSecret string
-	raspiUser string
+	bot           *bot.Bot
+	repo          *models.Repository
+	macSecret     string
+	raspiSecret   string
+	sendChannelID string
+	raspiUser     string
 }
 
-func NewState(b *bot.Bot, r *models.Repository, macSecret string) *State {
-	return &State{bot: b, repo: r, macSecret: macSecret, raspiUser: ""}
+func NewState(b *bot.Bot, r *models.Repository, macSecret string, raspiSecret string, sendChannelID string) *State {
+	return &State{bot: b, repo: r, macSecret: macSecret, raspiSecret: raspiSecret, sendChannelID: sendChannelID, raspiUser: ""}
 }

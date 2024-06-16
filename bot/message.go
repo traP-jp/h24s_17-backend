@@ -1,0 +1,31 @@
+package bot
+
+import (
+	"image"
+	"log"
+
+	"github.com/traPtitech/go-traq"
+)
+
+type Message struct {
+	strContent *string
+	imgContent *image.Image
+}
+
+func NewMessage(strContent *string, imgContent *image.Image) *Message {
+	return &Message{strContent: strContent, imgContent: imgContent}
+}
+
+func (bot *Bot) SendMessage(cid string, msg *Message, embed bool) {
+	req := traq.NewPostMessageRequest(*msg.strContent)
+	req.Embed = &embed
+	m, r, err := bot.client.MessageApi.
+		PostMessage(bot.auth, cid).
+		PostMessageRequest(*req).
+		Execute()
+	if err != nil {
+		log.Println("Failed To Post Message")
+	}
+	log.Println("Sent Message: " + m.Content)
+	log.Printf("StatusCode: %d\n", r.StatusCode)
+}

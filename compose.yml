@@ -36,8 +36,18 @@ services:
       - BOT_USER_ID=${BOT_USER_ID}
       - VERIFICATION_TOKEN=${VERIFICATION_TOKEN}
       - BOT_ACCESS_TOKEN=${BOT_ACCESS_TOKEN}
+      - RASPI_SECRET=${RASPI_SECRET}
+      - SEND_CHANNEL_ID=${SEND_CHANNEL_ID}
     depends_on:
       db:
         condition: service_healthy
     ports:
       - "1323:1323"
+  adminer:
+    image: adminer:standalone
+    restart: always
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+      ADMINER_DESIGN: pepa-linha
+    ports:
+      - "3001:8080"
