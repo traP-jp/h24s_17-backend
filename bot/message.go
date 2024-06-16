@@ -39,6 +39,7 @@ func (bot *Bot) SendMessage(cid string, msg *Message, embed bool) {
 
 		return
 	}
+	defer os.Remove(img.Name())
 	err = jpeg.Encode(img, *msg.imgContent, &jpeg.Options{Quality: 100})
 
 	if err != nil {
@@ -46,8 +47,6 @@ func (bot *Bot) SendMessage(cid string, msg *Message, embed bool) {
 
 		return
 	}
-
-	defer img.Close()
 
 	f, r, err := bot.client.FileApi.
 		PostFile(bot.auth).
@@ -61,4 +60,8 @@ func (bot *Bot) SendMessage(cid string, msg *Message, embed bool) {
 	}
 	log.Println("Sent File: " + f.GetName())
 	log.Printf("Status Code: %d", r.StatusCode)
+
+	if err := img.Close(); err != nil {
+		log.Println("Failed To Close File")
+	}
 }
