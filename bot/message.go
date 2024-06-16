@@ -54,12 +54,11 @@ func (bot *Bot) PostFile(cid string, filename string, content []byte) (*http.Res
 
 			return nil, err
 		}
-		err = writer.Close()
-		if err != nil {
-			log.Println("Failed To Close Writer")
+	}
+	if err := writer.Close(); err != nil {
+		log.Println("Failed To Close Writer")
 
-			return nil, err
-		}
+		return nil, err
 	}
 	r, err := http.NewRequestWithContext(bot.auth, "POST", "https://q.trap.jp/api/v3/files", body)
 	if err != nil {
