@@ -39,6 +39,18 @@ func (r *Repository) ReadTokens() ([]Token, error) {
 	return tokens, err
 }
 
+func (r *Repository) CheckIfTokenExists(token string) (bool, error) {
+	query := "SELECT COUNT(token) FROM tokens WHERE token = \"" + token + "\""
+	var count int64
+	err := r.db.Get(&count, query)
+
+	if err != nil || count == 0 {
+		return false, err
+	}
+
+	return true, err
+}
+
 // なかったら作る
 func (r *Repository) ReadLatestToken() (*Token, error) {
 	var token Token
