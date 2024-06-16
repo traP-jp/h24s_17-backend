@@ -8,8 +8,8 @@ import (
 )
 
 type Message struct {
-	strContent *string
-	imgContent *image.Image
+	StrContent *string
+	ImgContent *image.Image
 }
 
 func (bot *Bot) SendMessage(cid string, msg *Message, embed bool) {
