@@ -16,5 +16,6 @@ func GenerateRandomToken(length int) (string, error) {
 		}
 		token[i] = charset[num.Int64()]
 	}
+
 	return string(token), nil
 }

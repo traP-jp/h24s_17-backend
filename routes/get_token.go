@@ -18,7 +18,9 @@ func (s *State) GetTokenHandler(c echo.Context) error {
 	token, err := s.repo.ReadLatestToken()
 	if err != nil {
 		c.Logger().Error(err)
+
 		return echo.NewHTTPError(500, "Internal server error")
 	}
+
 	return c.JSON(200, GetTokenResponse{token.Token})
 }

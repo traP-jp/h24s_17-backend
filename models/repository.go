@@ -56,5 +56,6 @@ func (r *Repository) ReadLatestToken() (*Token, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &Token{Token: newToken}, nil
 }
