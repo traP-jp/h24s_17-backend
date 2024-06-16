@@ -12,7 +12,7 @@ type Message struct {
 	imgContent *image.Image
 }
 
-func (bot *Bot) sendMessage(cid string, msg *Message, embed bool) {
+func (bot *Bot) SendMessage(cid string, msg *Message, embed bool) {
 	req := traq.NewPostMessageRequest(*msg.strContent)
 	req.Embed = &embed
 	m, r, err := bot.client.MessageApi.
