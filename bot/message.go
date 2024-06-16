@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"image"
 	"image/jpeg"
 	"log"
@@ -10,29 +11,14 @@ import (
 )
 
 type Message struct {
-	strContent *string
 	imgContent *image.Image
 }
 
-func NewMessage(strContent *string, imgContent *image.Image) *Message {
-	return &Message{strContent: strContent, imgContent: imgContent}
+func NewMessage(imgContent *image.Image) *Message {
+	return &Message{imgContent: imgContent}
 }
 
-func (bot *Bot) SendMessage(cid string, msg *Message, embed bool) {
-	req := traq.NewPostMessageRequest(*msg.strContent)
-	req.Embed = &embed
-	m, r, err := bot.client.MessageApi.
-		PostMessage(bot.auth, cid).
-		PostMessageRequest(*req).
-		Execute()
-	if err != nil {
-		log.Println("Failed To Post Text Message")
-
-		return
-	}
-	log.Println("Sent Message: " + m.Content)
-	log.Printf("StatusCode: %d\n", r.StatusCode)
-
+func (bot *Bot) SendImage(cid string, msg *Message, embed bool) {
 	img, err := os.CreateTemp("", "img.jpeg")
 	if err != nil {
 		log.Println("Failed To Create Temp File")
@@ -64,4 +50,20 @@ func (bot *Bot) SendMessage(cid string, msg *Message, embed bool) {
 	if err := img.Close(); err != nil {
 		log.Println("Failed To Close File")
 	}
+
+	file := fmt.Sprintf("https://q.trap.jp/files/%s", f.Id)
+	req := traq.NewPostMessageRequest(file)
+	req.Embed = &embed
+	m, r, err := bot.client.MessageApi.
+		PostMessage(bot.auth, cid).
+		PostMessageRequest(*req).
+		Execute()
+	if err != nil {
+		log.Println("Failed To Post Text Message")
+
+		return
+	}
+	log.Println("Sent Message: " + m.Content)
+	log.Printf("StatusCode: %d\n", r.StatusCode)
+
 }
