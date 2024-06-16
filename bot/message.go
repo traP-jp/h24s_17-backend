@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"image"
-	"image/png"
+	"image/jpeg"
 	"io"
 	"log"
 	"mime/multipart"
@@ -32,7 +32,7 @@ func (bot *Bot) PostFile(cid string, filename string, content []byte) (*string, 
 	mw := multipart.NewWriter(&b)
 
 	mh := make(textproto.MIMEHeader)
-	mh.Set("Content-Type", "image/png")
+	mh.Set("Content-Type", "image/jpeg")
 	mh.Set("Content-Disposition", fmt.Sprintf(`form-data; name="file"; filename="%s"`, filename))
 
 	pw, err := mw.CreatePart(mh)
@@ -84,13 +84,18 @@ func (bot *Bot) PostFile(cid string, filename string, content []byte) (*string, 
 func (bot *Bot) SendImage(cid string, msg *Message, embed bool) {
 	buf := new(bytes.Buffer)
 
-	if err := png.Encode(buf, *msg.imgContent); err != nil {
-		log.Println("Failed To Encode png File")
+	if err := jpeg.Encode(buf, *msg.imgContent, nil); err != nil {
+		log.Println("Failed To Encode jpeg File")
 
 		return
 	}
 
-	fileID, err := bot.PostFile(cid, "img.png", buf.Bytes())
+	fileID, err := bot.PostFile(cid, "img.jpeg", buf.Bytes())
+	if err != nil {
+		log.Println("Failed To Post File: " + err.Error())
+
+		return
+	}
 	log.Println("FileID: " + *fileID)
 
 	file := fmt.Sprintf("現在のユーザー: @%s\n\nhttps://q.trap.jp/files/%s", msg.userID, *fileID)
