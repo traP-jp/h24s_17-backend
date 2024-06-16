@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"image"
 	"image/png"
+	"io"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -23,63 +24,61 @@ func NewMessage(u string, imgContent *image.Image) *Message {
 	return &Message{userID: u, imgContent: imgContent}
 }
 
-func (bot *Bot) PostFile(cid string, filename string, content []byte) (*http.Response, error) {
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-	{
-		part, err := writer.CreateFormField("channelId")
-		if err != nil {
-			log.Println("Failed To Create Form Field")
+func (bot *Bot) PostFile(cid string, filename string, content []byte) (*string, error) {
+	// https://github.com/ras0q/traq-wordcloud-bot/blob/ac3445ca8d94588cf7407a08375a4ed91869c56e/pkg/traqapi/traqapi.go#L86
+	// NOTE: go-traqがcontent-typeをapplication/octet-streamにしてしまうので自前でAPIを叩く
+	// Ref: https://github.com/traPtitech/go-traq/blob/2c7a5f9aa48ef67a6bd6daf4018ca2dabbbbb2f3/client.go#L304
+	var b bytes.Buffer
+	mw := multipart.NewWriter(&b)
 
-			return nil, err
-		}
-		_, err = part.Write([]byte(cid))
-		if err != nil {
-			log.Println("Failed To Write Content")
+	mh := make(textproto.MIMEHeader)
+	mh.Set("Content-Type", "image/png")
+	mh.Set("Content-Disposition", fmt.Sprintf(`form-data; name="file"; filename="%s"`, filename))
 
-			return nil, err
-		}
-	}
-	{
-		part := make(textproto.MIMEHeader)
-		part.Set("Content-Type", "image/png")
-		part.Set("Content-Disposition", fmt.Sprintf(`form-data; name="file"; filename="%s"`, filename))
-		wp, err := writer.CreatePart(part)
-		if err != nil {
-			log.Println("Failed To Write Content")
-
-			return nil, err
-		}
-		if _, err = wp.Write(content); err != nil {
-			log.Println("Failed To Write Content")
-
-			return nil, err
-		}
-	}
-	if err := writer.Close(); err != nil {
-		log.Println("Failed To Close Writer")
-
-		return nil, err
-	}
-	u := fmt.Sprintf("https://q.trap.jp/api/v3/files?channelId=%s", cid)
-	r, err := http.NewRequestWithContext(bot.auth, "POST", u, body)
+	pw, err := mw.CreatePart(mh)
 	if err != nil {
-		log.Println("Failed To Create Request")
-
-		return nil, err
+		return nil, fmt.Errorf("failed to create part: %w", err)
 	}
-	r.Header.Set("Content-Type", writer.FormDataContentType())
-	r.Header.Set("Authorization", "Bearer "+bot.auth.Value(traq.ContextAccessToken).(string))
-	client := &http.Client{}
-	resp, err := client.Do(r)
+
+	if _, err := pw.Write(content); err != nil {
+		return nil, fmt.Errorf("failed to copy file: %w", err)
+	}
+
+	contentType := mw.FormDataContentType()
+	mw.Close()
+
+	req, err := http.NewRequest(
+		"POST",
+		fmt.Sprintf("https://q.trap.jp/api/v3/files?channelId=%s", cid),
+		&b,
+	)
 	if err != nil {
-		log.Println("Failed To Do Request")
-
-		return nil, err
+		return nil, fmt.Errorf("Error creating request: %w", err)
 	}
-	log.Printf("Status Code: %d\n", resp.StatusCode)
 
-	return resp, nil
+	req.Header.Set("Content-Type", contentType)
+	req.Header.Set("Authorization", "Bearer "+bot.auth.Value(traq.ContextAccessToken).(string))
+
+	client := new(http.Client)
+
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("Error sending request: %w", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode >= 300 {
+		b, _ := io.ReadAll(res.Body)
+
+		return nil, fmt.Errorf("Error creating file: %s %s", res.Status, string(b))
+	}
+
+	var traqFile traq.FileInfo
+	if err := json.NewDecoder(res.Body).Decode(&traqFile); err != nil {
+		return nil, fmt.Errorf("Error decoding response: %w", err)
+	}
+
+	return &traqFile.Id, nil
 }
 
 func (bot *Bot) SendImage(cid string, msg *Message, embed bool) {
@@ -91,40 +90,10 @@ func (bot *Bot) SendImage(cid string, msg *Message, embed bool) {
 		return
 	}
 
-	r, err := bot.PostFile(cid, "img.png", buf.Bytes())
-	if err != nil {
-		log.Println("Faild To Post Image")
+	fileID, err := bot.PostFile(cid, "img.png", buf.Bytes())
+	log.Println("FileID: " + *fileID)
 
-		return
-	}
-	defer r.Body.Close()
-	buf.Reset()
-	if _, err := buf.ReadFrom(r.Body); err != nil {
-		log.Println("Failed To Read Response Body")
-
-		return
-	}
-	log.Printf("Status Code: %d\n", r.StatusCode)
-	var f traq.FileInfo
-	if err := json.Unmarshal(buf.Bytes(), &f); err != nil {
-		log.Println("Failed To Decode JSON")
-
-		return
-	}
-
-	{
-		// log response
-		log.Printf("File Info: %v\n", f)
-		buf := new(bytes.Buffer)
-		if err := json.NewEncoder(buf).Encode(f); err != nil {
-			log.Println("Failed To Encode JSON")
-
-			return
-		}
-		log.Printf("Response Body: %s\n", buf.String())
-	}
-
-	file := fmt.Sprintf("現在のユーザー: @%s\n\nhttps://q.trap.jp/files/%s", msg.userID, f.Id)
+	file := fmt.Sprintf("現在のユーザー: @%s\n\nhttps://q.trap.jp/files/%s", msg.userID, fileID)
 	req := traq.NewPostMessageRequest(file)
 	req.Embed = &embed
 	m, r, err := bot.client.MessageApi.
