@@ -10,9 +10,9 @@ import (
 // POST /checkin?token=foobar
 func (s *State) CheckinHandler(c echo.Context) error {
 	req := c.Request()
-	traQID := req.Header.Get("X-Forwarded-User")
+	userID := req.Header.Get("X-Forwarded-User")
 
-	if traQID == "" {
+	if userID == "" {
 		return echo.NewHTTPError(401, "Unauthorized")
 	}
 	token := c.QueryParam("token")
@@ -30,8 +30,12 @@ func (s *State) CheckinHandler(c echo.Context) error {
 		return c.String(http.StatusForbidden, "Please recieve the QR token again")
 	}
 
-	s.raspiUser = traQID
-	log.Println("POST /checkin id: " + traQID + ", token: " + token)
+	s.raspiUser = userID
+	log.Println("POST /checkin id: " + userID + ", token: " + token)
 
-	return c.String(http.StatusOK, "POST /checkin id: "+traQID+", token: "+token)
+	type jsonID struct {
+		UserID string `json:"userID,omitempty"`
+	}
+
+	return c.JSON(http.StatusOK, &jsonID{UserID: userID})
 }
