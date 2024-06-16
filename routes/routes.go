@@ -6,14 +6,13 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/traP-jp/h24s_17-backend/bot"
 	traqbot "github.com/traPtitech/traq-bot"
 )
 
-func (s *State) SetupRoutes(e *echo.Echo, b *bot.Bot) {
+func (s *State) SetupRoutes(e *echo.Echo) {
 	e.GET("/hello/:name", s.HelloHandler)
 	e.POST("/checkin", s.CheckinHandler)
-	e.POST("/bot", MakeBotHandler(b.VerificationToken, b.MakeHandlers()))
+	e.POST("/bot", MakeBotHandler(s.bot.VerificationToken, s.bot.MakeHandlers()))
 }
 
 func MakeBotHandler(vt string, handlers traqbot.EventHandlers) func(c echo.Context) error {

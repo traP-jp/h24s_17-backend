@@ -34,7 +34,6 @@ func main() {
 	fmt.Printf("loaded MAC_SECRET: %s\n", macSecret)
 
 	e := echo.New()
-	state := routes.NewState()
 
 	bot := bot.New(
 		os.Getenv("BOT_ID"),
@@ -42,7 +41,8 @@ func main() {
 		os.Getenv("BOT_ACCESS_TOKEN"),
 		os.Getenv("VERIFICATION_TOKEN"),
 	)
-	state.SetupRoutes(e, bot)
+	state := routes.NewState(bot, repo)
+	state.SetupRoutes(e)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
